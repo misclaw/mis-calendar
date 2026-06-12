@@ -1,6 +1,5 @@
 import {
   AlertTriangle,
-  CalendarDays,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -126,15 +125,29 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#top" aria-label="MIS Scholar Calendar home">
-          <span className="brand-mark">
-            <CalendarDays size={22} />
+        <div className="brand-group">
+          <a className="mc-home" href="https://misclaw.app" title="misclaw.app — all projects">
+            <img
+              src={theme === 'dark' ? '/misclaw-dark.png' : '/misclaw.png'}
+              alt=""
+              width="30"
+              height="30"
+              className="mc-logo"
+            />
+            <span className="mc-home-name">
+              misclaw<span>.app</span>
+            </span>
+          </a>
+          <span className="mc-sep" aria-hidden="true">
+            /
           </span>
-          <span>
-            <strong>MIS Scholar Calendar</strong>
-            <small>2026 conference dates and deadlines</small>
-          </span>
-        </a>
+          <a className="brand" href="#top" aria-label="MIS Scholar Calendar home">
+            <span>
+              <strong>MIS Scholar Calendar</strong>
+              <small>2026 conference dates and deadlines</small>
+            </span>
+          </a>
+        </div>
 
         <nav className="tabs" aria-label="Primary">
           <button className={activeTab === 'calendar' ? 'active' : ''} onClick={() => setActiveTab('calendar')}>

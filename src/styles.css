@@ -79,6 +79,47 @@ a {
   backdrop-filter: blur(16px);
 }
 
+.brand-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mc-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  flex: 0 0 auto;
+}
+
+.mc-home:hover .mc-home-name {
+  color: var(--primary);
+}
+
+.mc-logo {
+  display: block;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+
+.mc-home-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.mc-home-name span {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.mc-sep {
+  color: var(--line);
+  font-size: 1rem;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -87,20 +128,12 @@ a {
   min-width: 0;
 }
 
-.brand-mark,
 .icon-button {
   width: 42px;
   height: 42px;
   display: inline-grid;
   place-items: center;
   border-radius: var(--radius);
-}
-
-.brand-mark {
-  color: white;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  box-shadow: 0 10px 28px rgba(59, 91, 219, 0.22);
-  flex: 0 0 auto;
 }
 
 .brand strong,
@@ -879,6 +912,10 @@ h1 {
 
   .brand small {
     display: none;
+  }
+
+  .mc-home-name {
+    display: none; /* the mascot alone is the way home */
   }
 
   /* let the band grow with its content; the absolute img keeps covering */
