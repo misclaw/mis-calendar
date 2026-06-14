@@ -84,10 +84,6 @@ function App() {
     });
   }, [activeMonth, filteredEvents]);
 
-  const visibleSelectedCount = filteredEvents.filter((event) => selectedIds.has(event.id)).length;
-  const allVisibleSelected = filteredEvents.length > 0 && visibleSelectedCount === filteredEvents.length;
-  const upcomingCount = events.filter((event) => !isPastEvent(event)).length;
-
   function toggleEvent(eventId) {
     setSelectedIds((current) => {
       const next = new Set(current);
@@ -118,20 +114,6 @@ function App() {
           if (!isPastEvent(event)) next.add(event.id);
         });
       }
-      return next;
-    });
-  }
-
-  function setVisibleSelection(checked) {
-    setSelectedIds((current) => {
-      const next = new Set(current);
-      filteredEvents.forEach((event) => {
-        if (checked) {
-          next.add(event.id);
-        } else {
-          next.delete(event.id);
-        }
-      });
       return next;
     });
   }
@@ -201,20 +183,6 @@ function App() {
               AIS regional conferences, ICIS, WITS, INFORMS Annual Meeting, and CHITA in one exportable calendar.
             </p>
           </div>
-          <div className="intro-metrics" aria-label="Calendar summary">
-            <span>
-              <strong>{eventGroups.length}</strong>
-              conferences
-            </span>
-            <span>
-              <strong>{events.length}</strong>
-              dated items
-            </span>
-            <span>
-              <strong>{upcomingCount}</strong>
-              upcoming
-            </span>
-          </div>
         </section>
 
         <section className="conference-chooser" aria-label="Choose conferences">
@@ -267,39 +235,28 @@ function App() {
             </select>
           </label>
 
-          <button className="button ghost" onClick={() => setVisibleSelection(!allVisibleSelected)}>
-            <Check size={17} />
-            {allVisibleSelected ? 'Clear visible' : 'Select visible'}
-          </button>
-
-          <button
-            className="button ghost"
-            onClick={() =>
-              setSelectedIds(new Set(events.filter((event) => activeGroups.has(event.groupId)).map((event) => event.id)))
-            }
-          >
-            Select all
-          </button>
-
-          <button className="button ghost" onClick={() => setSelectedIds(new Set())}>
-            Clear all
-          </button>
-
-          <button className="button primary" onClick={exportIcs} disabled={selectedEvents.length === 0}>
-            <Download size={17} />
-            Export ICS
-          </button>
-
-          <button className="button secondary" onClick={exportCsv} disabled={selectedEvents.length === 0}>
-            <FileDown size={17} />
-            CSV
-          </button>
+          <div className="export-group" aria-label="Export selected dates">
+            <span className="export-count">{selectedEvents.length} selected</span>
+            <button
+              className="export-btn"
+              onClick={exportIcs}
+              disabled={selectedEvents.length === 0}
+              title="Download an .ics calendar of the selected dates"
+            >
+              <Download size={15} />
+              .ics
+            </button>
+            <button
+              className="export-btn"
+              onClick={exportCsv}
+              disabled={selectedEvents.length === 0}
+              title="Download a .csv spreadsheet of the selected dates"
+            >
+              <FileDown size={15} />
+              .csv
+            </button>
+          </div>
         </section>
-
-        <div className="selection-bar">
-          <span>{selectedEvents.length} selected for export</span>
-          <span>{filteredEvents.length} currently visible</span>
-        </div>
 
         {activeTab === 'calendar' && (
           <CalendarView

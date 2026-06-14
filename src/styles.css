@@ -242,30 +242,6 @@ h1 {
   line-height: 1.5;
 }
 
-.intro-metrics {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.intro-metrics span {
-  display: grid;
-  gap: 2px;
-  min-width: 86px;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 700;
-}
-
-.intro-metrics strong {
-  color: var(--text);
-  font-size: 1.4rem;
-}
-
 .conference-chooser {
   margin-bottom: 18px;
   padding: 14px 16px;
@@ -349,7 +325,6 @@ h1 {
 
 .notice,
 .controls,
-.selection-bar,
 .calendar-panel,
 .month-agenda,
 .conference-block {
@@ -374,16 +349,25 @@ h1 {
 }
 
 .controls {
-  display: grid;
-  grid-template-columns: minmax(240px, 1.6fr) minmax(170px, 0.55fr) repeat(5, auto);
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  padding: 12px;
+  margin-bottom: 18px;
+  padding: 10px;
+}
+
+.search-box {
+  flex: 1 1 220px;
+}
+
+.select-wrap {
+  flex: 0 0 auto;
 }
 
 .search-box,
 .select-wrap {
-  min-height: 44px;
+  min-height: 42px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -413,51 +397,48 @@ h1 {
   cursor: pointer;
 }
 
-.button {
-  min-height: 44px;
+.export-group {
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  padding: 0 14px;
-  font-weight: 800;
-  cursor: pointer;
-  text-decoration: none;
+}
+
+.export-count {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.button.primary {
-  color: white;
-  background: var(--primary-strong);
-}
-
-.button.secondary {
-  color: var(--text);
-  background: color-mix(in srgb, var(--warning) 70%, var(--surface));
-}
-
-.button.ghost {
-  border-color: var(--line);
+.export-btn {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   background: var(--surface);
   color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
 }
 
-.selection-bar {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 10px;
-  margin-bottom: 18px;
-  padding: 10px 14px;
-  color: var(--muted);
-  font-size: 0.9rem;
+.export-btn:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--line));
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+
+.export-btn svg {
+  color: var(--primary-strong);
+}
+
+.export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .calendar-layout {
@@ -800,14 +781,6 @@ h1 {
 }
 
 @media (max-width: 1120px) {
-  .controls {
-    grid-template-columns: minmax(240px, 1fr) minmax(170px, 0.5fr) repeat(3, auto);
-  }
-
-  .controls .button:nth-last-child(-n + 2) {
-    grid-column: span 1;
-  }
-
   .calendar-layout {
     grid-template-columns: 1fr;
   }
@@ -830,22 +803,6 @@ h1 {
 
   .tabs button {
     flex: 1;
-  }
-
-  .intro-metrics {
-    width: 100%;
-  }
-
-  .controls {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .search-box {
-    grid-column: 1 / -1;
-  }
-
-  .button {
-    white-space: normal;
   }
 
   .month-pills {
@@ -892,22 +849,48 @@ h1 {
   }
 
   h1 {
-    font-size: clamp(1.7rem, 8vw, 2.3rem);
+    font-size: clamp(1.55rem, 7.5vw, 2.1rem);
   }
 
-  .intro-metrics {
-    width: 100%;
+  .intro-copy,
+  .chooser-hint {
+    display: none;
   }
 
-  .intro-metrics span {
-    flex: 1;
+  .page-intro {
+    margin-bottom: 12px;
   }
 
-  .controls {
-    grid-template-columns: 1fr;
+  .conference-chooser {
+    margin-bottom: 12px;
   }
 
-  .selection-bar,
+  .chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -16px;
+    padding: 0 16px 4px;
+    scrollbar-width: none;
+  }
+
+  .chip-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .conf-chip {
+    flex: 0 0 auto;
+  }
+
+  .search-box {
+    flex: 1 1 100%;
+  }
+
+  .notice {
+    margin: 12px 0;
+    padding: 12px;
+    font-size: 0.82rem;
+  }
+
   .conference-heading {
     flex-direction: column;
   }
