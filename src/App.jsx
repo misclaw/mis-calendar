@@ -230,6 +230,7 @@ function App() {
                 key={group.id}
                 group={group}
                 checked={activeGroups.has(group.id)}
+                past={!group.events.some((event) => !isPastEvent(event))}
                 onToggle={() => toggleGroup(group.id)}
               />
             ))}
@@ -475,16 +476,16 @@ function EventsView({ filteredEvents, activeGroups, selectedIds, toggleEvent }) 
   );
 }
 
-function ConferenceChip({ group, checked, onToggle }) {
+function ConferenceChip({ group, checked, past, onToggle }) {
   return (
     <button
       type="button"
-      className={`conf-chip ${checked ? 'checked' : ''}`}
+      className={`conf-chip ${checked ? 'checked' : ''} ${past ? 'past' : ''}`}
       style={{ '--event-color': group.color }}
       onClick={onToggle}
       role="checkbox"
       aria-checked={checked}
-      title={group.name}
+      title={past ? `${group.name} — all dates have passed` : group.name}
     >
       <span className="conf-chip-check" aria-hidden="true">{checked && <Check size={13} />}</span>
       <span className="conf-chip-label">{group.acronym}</span>

@@ -329,6 +329,11 @@ h1 {
   color: white;
 }
 
+.conf-chip.past .conf-chip-label {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
 .conf-chip-check {
   width: 20px;
   height: 20px;
