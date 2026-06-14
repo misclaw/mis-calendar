@@ -7,6 +7,7 @@ import {
   ExternalLink,
   FileDown,
   Mail,
+  Minus,
   Moon,
   Search,
   Send,
@@ -52,7 +53,9 @@ function App() {
   const [activeMonth, setActiveMonth] = useState(5);
   const [query, setQuery] = useState('');
   const [kindFilter, setKindFilter] = useState('all');
-  const [selectedIds, setSelectedIds] = useState(() => new Set(events.map((event) => event.id)));
+  const [selectedIds, setSelectedIds] = useState(
+    () => new Set(events.filter((event) => !isPastEvent(event)).map((event) => event.id)),
+  );
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -86,6 +89,20 @@ function App() {
   const allVisibleSelected = filteredEvents.length > 0 && visibleSelectedCount === filteredEvents.length;
   const upcomingCount = events.filter((event) => !isPastEvent(event)).length;
 
+  const groupSelection = useMemo(() => {
+    const summary = {};
+    eventGroups.forEach((group) => {
+      summary[group.id] = { total: 0, selected: 0 };
+    });
+    events.forEach((event) => {
+      const entry = summary[event.groupId];
+      if (!entry) return;
+      entry.total += 1;
+      if (selectedIds.has(event.id)) entry.selected += 1;
+    });
+    return summary;
+  }, [events, selectedIds]);
+
   function toggleEvent(eventId) {
     setSelectedIds((current) => {
       const next = new Set(current);
@@ -94,6 +111,16 @@ function App() {
       } else {
         next.add(eventId);
       }
+      return next;
+    });
+  }
+
+  function toggleGroup(groupId) {
+    const groupEventIds = events.filter((event) => event.groupId === groupId).map((event) => event.id);
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      const allSelected = groupEventIds.every((id) => next.has(id));
+      groupEventIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
       return next;
     });
   }
@@ -172,30 +199,51 @@ function App() {
       </header>
 
       <main id="top">
-        <section className="hero-band" aria-labelledby="page-title">
-          <img src="/mis-calendar-banner.png" alt="" />
-          <div className="hero-overlay">
-            <div>
-              <p className="eyebrow">MIS research planning</p>
-              <h1 id="page-title">2026 conference calendar</h1>
-              <p className="hero-copy">
-                AIS regional conferences, ICIS, WITS, INFORMS Annual Meeting, and CHITA in one exportable calendar.
-              </p>
-            </div>
-            <div className="hero-metrics" aria-label="Calendar summary">
-              <span>
-                <strong>{eventGroups.length}</strong>
-                conferences
-              </span>
-              <span>
-                <strong>{events.length}</strong>
-                dated items
-              </span>
-              <span>
-                <strong>{upcomingCount}</strong>
-                upcoming
-              </span>
-            </div>
+        <section className="page-intro" aria-labelledby="page-title">
+          <div className="intro-head">
+            <p className="eyebrow">MIS research planning</p>
+            <h1 id="page-title">2026 conference calendar</h1>
+            <p className="intro-copy">
+              AIS regional conferences, ICIS, WITS, INFORMS Annual Meeting, and CHITA in one exportable calendar.
+            </p>
+          </div>
+          <div className="intro-metrics" aria-label="Calendar summary">
+            <span>
+              <strong>{eventGroups.length}</strong>
+              conferences
+            </span>
+            <span>
+              <strong>{events.length}</strong>
+              dated items
+            </span>
+            <span>
+              <strong>{upcomingCount}</strong>
+              upcoming
+            </span>
+          </div>
+        </section>
+
+        <section className="conference-chooser" aria-label="Choose conferences">
+          <div className="chooser-head">
+            <span className="chooser-title">Conferences</span>
+            <span className="chooser-hint">
+              Toggle a conference to include or exclude its dates from your export.
+            </span>
+          </div>
+          <div className="chip-row" role="group" aria-label="Conference selection">
+            {eventGroups.map((group) => {
+              const summary = groupSelection[group.id] || { total: 0, selected: 0 };
+              const state =
+                summary.selected === 0 ? 'none' : summary.selected === summary.total ? 'all' : 'some';
+              return (
+                <ConferenceChip
+                  key={group.id}
+                  group={group}
+                  state={state}
+                  onToggle={() => toggleGroup(group.id)}
+                />
+              );
+            })}
           </div>
         </section>
 
@@ -373,6 +421,7 @@ function CalendarView({ activeMonth, setActiveMonth, filteredEvents, monthEvents
                 event={event}
                 checked={selectedIds.has(event.id)}
                 onChange={() => toggleEvent(event.id)}
+                showKind={false}
                 key={event.id}
               />
             ))
@@ -434,7 +483,28 @@ function EventsView({ filteredEvents, selectedIds, toggleEvent }) {
   );
 }
 
-function EventRow({ event, checked, onChange }) {
+function ConferenceChip({ group, state, onToggle }) {
+  const ariaChecked = state === 'all' ? 'true' : state === 'some' ? 'mixed' : 'false';
+  return (
+    <button
+      type="button"
+      className={`conf-chip ${state}`}
+      style={{ '--event-color': group.color }}
+      onClick={onToggle}
+      role="checkbox"
+      aria-checked={ariaChecked}
+      title={group.name}
+    >
+      <span className="conf-chip-check" aria-hidden="true">
+        {state === 'all' && <Check size={13} />}
+        {state === 'some' && <Minus size={13} />}
+      </span>
+      <span className="conf-chip-label">{group.acronym}</span>
+    </button>
+  );
+}
+
+function EventRow({ event, checked, onChange, showKind = true }) {
   return (
     <label className={`event-row ${checked ? 'checked' : ''}`}>
       <input type="checkbox" checked={checked} onChange={onChange} />
@@ -457,7 +527,9 @@ function EventRow({ event, checked, onChange }) {
         </span>
         {event.note && <span className="event-note">{event.note}</span>}
       </span>
-      <span className={`kind-badge ${event.kind}`}>{kindLabels[event.kind] || event.kind}</span>
+      {showKind && (
+        <span className={`kind-badge ${event.kind}`}>{kindLabels[event.kind] || event.kind}</span>
+      )}
     </label>
   );
 }

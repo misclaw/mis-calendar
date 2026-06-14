@@ -198,45 +198,26 @@ main {
   padding: 24px clamp(16px, 3vw, 34px) 48px;
 }
 
-.hero-band {
-  position: relative;
-  min-height: clamp(330px, 48vw, 510px);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  background: #203534;
-}
-
-.hero-band img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(1.02) contrast(1.02);
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
+.page-intro {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 28px;
-  padding: clamp(22px, 5vw, 54px);
-  color: white;
-  background:
-    linear-gradient(90deg, rgba(12, 30, 30, 0.88), rgba(12, 30, 30, 0.42) 58%, rgba(12, 30, 30, 0.18)),
-    linear-gradient(0deg, rgba(0, 0, 0, 0.45), transparent 58%);
+  gap: clamp(16px, 4vw, 40px);
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.intro-head {
+  min-width: 0;
 }
 
 .eyebrow,
 .section-kicker {
-  margin: 0 0 10px;
-  color: #f1c95b;
-  font-size: 0.78rem;
+  margin: 0 0 8px;
+  color: var(--primary-strong);
+  font-size: 0.76rem;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
@@ -248,45 +229,119 @@ p {
 }
 
 h1 {
-  margin-bottom: 14px;
-  font-size: clamp(2.55rem, 8vw, 5.8rem);
-  line-height: 0.94;
-  max-width: 780px;
-  letter-spacing: 0;
+  margin-bottom: 10px;
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
 }
 
-.hero-copy {
-  margin-bottom: 0;
-  max-width: 680px;
-  color: rgba(255, 255, 255, 0.86);
-  font-size: clamp(1rem, 2vw, 1.25rem);
+.intro-copy {
+  margin: 0;
+  max-width: 640px;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
   line-height: 1.5;
 }
 
-.hero-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(92px, 1fr));
+.intro-metrics {
+  display: flex;
   gap: 10px;
-  min-width: min(420px, 100%);
+  flex-wrap: wrap;
 }
 
-.hero-metrics span {
+.intro-metrics span {
   display: grid;
-  gap: 5px;
-  min-height: 84px;
-  align-content: center;
-  padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  gap: 2px;
+  min-width: 86px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.8rem;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
-.hero-metrics strong {
+.intro-metrics strong {
+  color: var(--text);
+  font-size: 1.4rem;
+}
+
+.conference-chooser {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+}
+
+.chooser-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.chooser-title {
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.chooser-hint {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.conf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.conf-chip:hover {
+  border-color: color-mix(in srgb, var(--event-color) 50%, var(--line));
+}
+
+.conf-chip-check {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: transparent;
+}
+
+.conf-chip.all,
+.conf-chip.some {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--event-color) 55%, var(--line));
+  background: color-mix(in srgb, var(--event-color) 12%, var(--surface));
+}
+
+.conf-chip.all .conf-chip-check,
+.conf-chip.some .conf-chip-check {
+  border-color: var(--event-color);
+  background: var(--event-color);
   color: white;
-  font-size: 1.65rem;
 }
 
 .notice,
@@ -853,13 +908,7 @@ h1 {
     flex: 1;
   }
 
-  .hero-overlay {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-  }
-
-  .hero-metrics {
+  .intro-metrics {
     width: 100%;
   }
 
@@ -918,21 +967,16 @@ h1 {
     display: none; /* the mascot alone is the way home */
   }
 
-  /* let the band grow with its content; the absolute img keeps covering */
-  .hero-band {
-    min-height: 0;
-  }
-
-  .hero-overlay {
-    position: relative;
-  }
-
   h1 {
-    font-size: clamp(2rem, 9vw, 2.6rem);
+    font-size: clamp(1.7rem, 8vw, 2.3rem);
   }
 
-  .hero-metrics {
-    grid-template-columns: 1fr;
+  .intro-metrics {
+    width: 100%;
+  }
+
+  .intro-metrics span {
+    flex: 1;
   }
 
   .controls {
