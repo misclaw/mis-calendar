@@ -6,11 +6,8 @@ import {
   Download,
   ExternalLink,
   FileDown,
-  Mail,
-  Minus,
   Moon,
   Search,
-  Send,
   Sun,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -41,8 +38,6 @@ const kindLabels = {
   poster: 'Poster',
 };
 
-const todayString = new Date().toISOString().slice(0, 10);
-
 function App() {
   const events = useMemo(
     () => flattenEvents().sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)),
@@ -53,6 +48,9 @@ function App() {
   const [activeMonth, setActiveMonth] = useState(5);
   const [query, setQuery] = useState('');
   const [kindFilter, setKindFilter] = useState('all');
+  const [activeGroups, setActiveGroups] = useState(
+    () => new Set(eventGroups.filter((group) => group.events.some((event) => !isPastEvent(event))).map((group) => group.id)),
+  );
   const [selectedIds, setSelectedIds] = useState(
     () => new Set(events.filter((event) => !isPastEvent(event)).map((event) => event.id)),
   );
@@ -65,12 +63,13 @@ function App() {
   const filteredEvents = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return events.filter((event) => {
+      if (!activeGroups.has(event.groupId)) return false;
       const matchesKind = kindFilter === 'all' || event.kind === kindFilter;
       const haystack = `${event.acronym} ${event.conferenceName} ${event.title} ${event.location} ${event.theme}`.toLowerCase();
       const matchesQuery = !normalizedQuery || haystack.includes(normalizedQuery);
       return matchesKind && matchesQuery;
     });
-  }, [events, kindFilter, query]);
+  }, [events, activeGroups, kindFilter, query]);
 
   const selectedEvents = useMemo(
     () => events.filter((event) => selectedIds.has(event.id)),
@@ -89,20 +88,6 @@ function App() {
   const allVisibleSelected = filteredEvents.length > 0 && visibleSelectedCount === filteredEvents.length;
   const upcomingCount = events.filter((event) => !isPastEvent(event)).length;
 
-  const groupSelection = useMemo(() => {
-    const summary = {};
-    eventGroups.forEach((group) => {
-      summary[group.id] = { total: 0, selected: 0 };
-    });
-    events.forEach((event) => {
-      const entry = summary[event.groupId];
-      if (!entry) return;
-      entry.total += 1;
-      if (selectedIds.has(event.id)) entry.selected += 1;
-    });
-    return summary;
-  }, [events, selectedIds]);
-
   function toggleEvent(eventId) {
     setSelectedIds((current) => {
       const next = new Set(current);
@@ -116,11 +101,23 @@ function App() {
   }
 
   function toggleGroup(groupId) {
-    const groupEventIds = events.filter((event) => event.groupId === groupId).map((event) => event.id);
+    const groupEvents = events.filter((event) => event.groupId === groupId);
+    const isActive = activeGroups.has(groupId);
+    setActiveGroups((current) => {
+      const next = new Set(current);
+      if (isActive) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
     setSelectedIds((current) => {
       const next = new Set(current);
-      const allSelected = groupEventIds.every((id) => next.has(id));
-      groupEventIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
+      if (isActive) {
+        groupEvents.forEach((event) => next.delete(event.id));
+      } else {
+        groupEvents.forEach((event) => {
+          if (!isPastEvent(event)) next.add(event.id);
+        });
+      }
       return next;
     });
   }
@@ -183,9 +180,6 @@ function App() {
           <button className={activeTab === 'events' ? 'active' : ''} onClick={() => setActiveTab('events')}>
             Events
           </button>
-          <button className={activeTab === 'feedback' ? 'active' : ''} onClick={() => setActiveTab('feedback')}>
-            Feedback
-          </button>
         </nav>
 
         <button
@@ -231,19 +225,14 @@ function App() {
             </span>
           </div>
           <div className="chip-row" role="group" aria-label="Conference selection">
-            {eventGroups.map((group) => {
-              const summary = groupSelection[group.id] || { total: 0, selected: 0 };
-              const state =
-                summary.selected === 0 ? 'none' : summary.selected === summary.total ? 'all' : 'some';
-              return (
-                <ConferenceChip
-                  key={group.id}
-                  group={group}
-                  state={state}
-                  onToggle={() => toggleGroup(group.id)}
-                />
-              );
-            })}
+            {eventGroups.map((group) => (
+              <ConferenceChip
+                key={group.id}
+                group={group}
+                checked={activeGroups.has(group.id)}
+                onToggle={() => toggleGroup(group.id)}
+              />
+            ))}
           </div>
         </section>
 
@@ -284,7 +273,9 @@ function App() {
 
           <button
             className="button ghost"
-            onClick={() => setSelectedIds(new Set(events.map((event) => event.id)))}
+            onClick={() =>
+              setSelectedIds(new Set(events.filter((event) => activeGroups.has(event.groupId)).map((event) => event.id)))
+            }
           >
             Select all
           </button>
@@ -323,12 +314,11 @@ function App() {
         {activeTab === 'events' && (
           <EventsView
             filteredEvents={filteredEvents}
+            activeGroups={activeGroups}
             selectedIds={selectedIds}
             toggleEvent={toggleEvent}
           />
         )}
-
-        {activeTab === 'feedback' && <FeedbackView />}
       </main>
     </div>
   );
@@ -432,11 +422,13 @@ function CalendarView({ activeMonth, setActiveMonth, filteredEvents, monthEvents
   );
 }
 
-function EventsView({ filteredEvents, selectedIds, toggleEvent }) {
-  const grouped = eventGroups.map((group) => ({
-    ...group,
-    items: filteredEvents.filter((event) => event.groupId === group.id),
-  }));
+function EventsView({ filteredEvents, activeGroups, selectedIds, toggleEvent }) {
+  const grouped = eventGroups
+    .filter((group) => activeGroups.has(group.id))
+    .map((group) => ({
+      ...group,
+      items: filteredEvents.filter((event) => event.groupId === group.id),
+    }));
 
   return (
     <section className="event-directory">
@@ -483,22 +475,18 @@ function EventsView({ filteredEvents, selectedIds, toggleEvent }) {
   );
 }
 
-function ConferenceChip({ group, state, onToggle }) {
-  const ariaChecked = state === 'all' ? 'true' : state === 'some' ? 'mixed' : 'false';
+function ConferenceChip({ group, checked, onToggle }) {
   return (
     <button
       type="button"
-      className={`conf-chip ${state}`}
+      className={`conf-chip ${checked ? 'checked' : ''}`}
       style={{ '--event-color': group.color }}
       onClick={onToggle}
       role="checkbox"
-      aria-checked={ariaChecked}
+      aria-checked={checked}
       title={group.name}
     >
-      <span className="conf-chip-check" aria-hidden="true">
-        {state === 'all' && <Check size={13} />}
-        {state === 'some' && <Minus size={13} />}
-      </span>
+      <span className="conf-chip-check" aria-hidden="true">{checked && <Check size={13} />}</span>
       <span className="conf-chip-label">{group.acronym}</span>
     </button>
   );
@@ -531,65 +519,6 @@ function EventRow({ event, checked, onChange, showKind = true }) {
         <span className={`kind-badge ${event.kind}`}>{kindLabels[event.kind] || event.kind}</span>
       )}
     </label>
-  );
-}
-
-function FeedbackView() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-
-  const subject = encodeURIComponent('MIS Scholar Calendar feedback');
-  const body = encodeURIComponent(
-    [`Name: ${name}`, `Email: ${email}`, '', message].filter((line) => line !== undefined).join('\n'),
-  );
-  const mailto = `mailto:misclaw77@outlook.com?subject=${subject}&body=${body}`;
-
-  return (
-    <section className="feedback-grid">
-      <div className="feedback-panel">
-        <div className="section-kicker">
-          <Mail size={18} />
-          Feedback
-        </div>
-        <h2>Send a correction or request</h2>
-        <form action={mailto} method="post" encType="text/plain">
-          <label>
-            Name
-            <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
-          </label>
-          <label>
-            Email
-            <input
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.edu"
-              type="email"
-            />
-          </label>
-          <label>
-            Message
-            <textarea
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              placeholder="Add an event, report a changed deadline, or ask a question."
-              rows="7"
-            />
-          </label>
-          <a className="button primary mail-button" href={mailto}>
-            <Send size={17} />
-            Open email
-          </a>
-        </form>
-      </div>
-
-      <aside className="feedback-card">
-        <h3>Contact</h3>
-        <a href="mailto:misclaw77@outlook.com">misclaw77@outlook.com</a>
-        <p>Include the official event URL when reporting a deadline change.</p>
-        <div className="today-stamp">Today: {todayString}</div>
-      </aside>
-    </section>
   );
 }
 

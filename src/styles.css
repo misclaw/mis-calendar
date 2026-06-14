@@ -211,8 +211,7 @@ main {
   min-width: 0;
 }
 
-.eyebrow,
-.section-kicker {
+.eyebrow {
   margin: 0 0 8px;
   color: var(--primary-strong);
   font-size: 0.76rem;
@@ -318,6 +317,18 @@ h1 {
   border-color: color-mix(in srgb, var(--event-color) 50%, var(--line));
 }
 
+.conf-chip[aria-checked='true'] {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--event-color) 55%, var(--line));
+  background: color-mix(in srgb, var(--event-color) 12%, var(--surface));
+}
+
+.conf-chip[aria-checked='true'] .conf-chip-check {
+  border-color: var(--event-color);
+  background: var(--event-color);
+  color: white;
+}
+
 .conf-chip-check {
   width: 20px;
   height: 20px;
@@ -330,28 +341,13 @@ h1 {
   color: transparent;
 }
 
-.conf-chip.all,
-.conf-chip.some {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--event-color) 55%, var(--line));
-  background: color-mix(in srgb, var(--event-color) 12%, var(--surface));
-}
-
-.conf-chip.all .conf-chip-check,
-.conf-chip.some .conf-chip-check {
-  border-color: var(--event-color);
-  background: var(--event-color);
-  color: white;
-}
 
 .notice,
 .controls,
 .selection-bar,
 .calendar-panel,
 .month-agenda,
-.conference-block,
-.feedback-panel,
-.feedback-card {
+.conference-block {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -394,9 +390,7 @@ h1 {
 }
 
 .search-box input,
-.select-wrap select,
-.feedback-panel input,
-.feedback-panel textarea {
+.select-wrap select {
   width: 100%;
   border: 0;
   outline: 0;
@@ -470,9 +464,7 @@ h1 {
 
 .calendar-panel,
 .month-agenda,
-.conference-block,
-.feedback-panel,
-.feedback-card {
+.conference-block {
   box-shadow: 0 8px 26px rgba(30, 31, 28, 0.05);
 }
 
@@ -500,8 +492,7 @@ h1 {
 
 .month-switcher h2,
 .month-agenda h2,
-.conference-heading h2,
-.feedback-panel h2 {
+.conference-heading h2 {
   margin: 0;
   letter-spacing: 0;
 }
@@ -803,77 +794,6 @@ h1 {
   border: 0;
 }
 
-.feedback-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.32fr);
-  gap: 18px;
-  align-items: start;
-}
-
-.feedback-panel,
-.feedback-card {
-  padding: clamp(18px, 3vw, 28px);
-}
-
-.section-kicker {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  color: var(--primary-strong);
-}
-
-.feedback-panel h2 {
-  margin-bottom: 22px;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-}
-
-.feedback-panel form {
-  display: grid;
-  gap: 14px;
-}
-
-.feedback-panel label {
-  display: grid;
-  gap: 8px;
-  color: var(--muted);
-  font-weight: 800;
-}
-
-.feedback-panel input,
-.feedback-panel textarea {
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface-soft);
-  padding: 12px;
-  resize: vertical;
-}
-
-.mail-button {
-  width: fit-content;
-  margin-top: 4px;
-}
-
-.feedback-card h3 {
-  margin-bottom: 8px;
-}
-
-.feedback-card a {
-  color: var(--primary-strong);
-  font-weight: 900;
-}
-
-.feedback-card p {
-  color: var(--muted);
-  margin: 18px 0;
-}
-
-.today-stamp {
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
 @media (max-width: 1120px) {
   .controls {
     grid-template-columns: minmax(240px, 1fr) minmax(170px, 0.5fr) repeat(3, auto);
@@ -883,8 +803,7 @@ h1 {
     grid-column: span 1;
   }
 
-  .calendar-layout,
-  .feedback-grid {
+  .calendar-layout {
     grid-template-columns: 1fr;
   }
 
