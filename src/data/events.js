@@ -19,6 +19,31 @@ export const eventGroups = [
     color: '#2f7c7a',
     description:
       'The Americas Conference on Information Systems is one of AIS’s flagship regional conferences, drawing IS scholars from across the Americas.',
+    topics: [
+      'Accounting Information Systems',
+      'Adoption & Diffusion of IT',
+      'AI System Design & Interaction',
+      'Decision Support & Analytics',
+      'Generative AI in Education & Society',
+      'Governance, Policy & Societal Implications of AI',
+      'Human-AI Co-Agency',
+      'The Dark Side of Technology Use',
+    ],
+    committee: [
+      { role: 'Honorary Chair', name: 'Jane Fedorowicz', affiliation: 'Bentley University' },
+      { role: 'Conference Co-Chair', name: 'Dave Croasdell', affiliation: 'University of Nevada, Reno' },
+      { role: 'Conference Co-Chair', name: 'John D\'Arcy', affiliation: 'University of Delaware' },
+      { role: 'Conference Co-Chair', name: 'Saonee Sarker', affiliation: 'Virginia Tech' },
+      { role: 'Program Co-Chair', name: 'Robert E. Crossler', affiliation: 'Washington State University' },
+      { role: 'Program Co-Chair', name: 'Alexandra Durcikova', affiliation: 'University of Oklahoma' },
+      { role: 'Program Co-Chair', name: 'Abhay Mishra', affiliation: 'University of Arkansas' },
+      { role: 'Program Co-Chair', name: 'Jason Talaei', affiliation: 'University of Nevada, Reno' },
+    ],
+    callForPapers: {
+      summary:
+        'Submissions across the conference tracks and SIGs — full and ERF papers, plus TREO, panels, PDS, and workshops.',
+      url: 'https://amcis2026.aisconferences.org/submissions/call-for-papers/',
+    },
     events: [
       {
         id: 'amcis-submissions-open',
@@ -108,6 +133,31 @@ export const eventGroups = [
     color: '#91633b',
     description:
       'The European Conference on Information Systems is AIS’s flagship European conference, hosted in 2026 by Bocconi University in Milan.',
+    topics: [
+      'Business Analytics',
+      'Algorithmic Management & the Future of Work',
+      'GenAI & the Transformation of the Workplace',
+      'Cybersecurity & Privacy',
+      'Digital Transformation',
+      'Health Information Technology',
+      'IS for Resilience & Sustainable Development',
+      'Blockchain & Fintech',
+      'Digital Government Transformation',
+    ],
+    committee: [
+      { role: 'Conference Co-Chair', name: 'Jan vom Brocke', affiliation: 'University of Münster' },
+      { role: 'Conference Co-Chair', name: 'Wendy Currie', affiliation: 'Audencia Business School' },
+      { role: 'Conference Co-Chair', name: 'Ferdinando Pennarola', affiliation: 'Bocconi University' },
+      { role: 'Program Co-Chair', name: 'Andrea Carugati', affiliation: 'Aarhus University' },
+      { role: 'Program Co-Chair', name: 'Saonee Sarker', affiliation: 'Virginia Tech' },
+      { role: 'Program Co-Chair', name: 'Stefano Za', affiliation: 'Università G. d\'Annunzio' },
+      { role: 'Program Co-Chair', name: 'Efpraxia Zamani', affiliation: 'Durham University' },
+    ],
+    callForPapers: {
+      summary:
+        'Completed and short research papers, plus TREO Forum and panel proposals, via the PCS platform (max three submissions per author).',
+      url: 'https://ecis2026.it/call-for-submissions/',
+    },
     events: [
       {
         id: 'ecis-workshop-deadline',
@@ -182,6 +232,30 @@ export const eventGroups = [
     color: '#b44748',
     description:
       'The Pacific Asia Conference on Information Systems is AIS’s flagship conference for the Pacific Asia region.',
+    topics: [
+      'AI & Machine Learning',
+      'AI-Driven Future of Work',
+      'AI Ethics & Societal Impact',
+      'Data Analytics for Business & Society',
+      'Blockchain, DLT & Fintech',
+      'Platforms, Sharing Economy & Crowds',
+      'Digital Security, Privacy & Resilience',
+      'Digital Innovation & Entrepreneurship',
+      'Healthcare IS',
+    ],
+    committee: [
+      { role: 'Conference Co-Chair', name: 'Juliana Sutanto', affiliation: 'Monash University' },
+      { role: 'Conference Co-Chair', name: 'Chih-Ping Wei', affiliation: 'National Taiwan University' },
+      { role: 'Conference Co-Chair', name: 'Putu Wuri Handayani', affiliation: 'Universitas Indonesia' },
+      { role: 'Program Co-Chair', name: 'Shuk Ying (Susanna) Ho', affiliation: 'Australian National University' },
+      { role: 'Program Co-Chair', name: 'Chee Wei (David) Phang', affiliation: 'University of Nottingham Ningbo China' },
+      { role: 'Program Co-Chair', name: 'Chuan-Hoo Tan', affiliation: 'National University of Singapore' },
+    ],
+    callForPapers: {
+      summary:
+        'Submissions across 17 tracks; at least one author of each accepted paper must register and present.',
+      url: 'https://pacis2026.aisconferences.org/submissions/call-for-papers/',
+    },
     events: [
       {
         id: 'pacis-submission-deadline',
@@ -249,6 +323,31 @@ export const eventGroups = [
     color: '#4f65a6',
     description:
       'The International Conference on Information Systems is the premier global gathering of IS researchers and the flagship conference of AIS.',
+    topics: [
+      'Future of Work',
+      'Sustainability & Environmental Issues',
+      'Responsibility & Ethics',
+      'Societal Impacts',
+      'Data Management & Analytics',
+      'Cybersecurity & Privacy',
+      'Blockchain, DLT & Fintech',
+      'Computational Design & Evaluation',
+      'Design, Development & Project Management',
+    ],
+    committee: [
+      { role: 'Honorary Chair', name: 'Helmut Krcmar', affiliation: 'Technical University of Munich' },
+      { role: 'Conference Co-Chair', name: 'Jan Pries-Heje', affiliation: 'Roskilde University' },
+      { role: 'Conference Co-Chair', name: 'Isabel Ramos', affiliation: 'University of Minho' },
+      { role: 'Conference Co-Chair', name: 'Michael Rosemann', affiliation: 'Queensland University of Technology' },
+      { role: 'Program Co-Chair', name: 'Nicholas Berente', affiliation: 'University of Notre Dame' },
+      { role: 'Program Co-Chair', name: 'Andrew Burton-Jones', affiliation: 'University of Queensland' },
+      { role: 'Program Co-Chair', name: 'Amany Elbanna', affiliation: 'University of Sussex' },
+    ],
+    callForPapers: {
+      summary:
+        'Submissions across tracks aligned with the conference theme — completed and short papers.',
+      url: 'https://icis2026.aisconferences.org/submissions/call-for-papers/',
+    },
     events: [
       {
         id: 'icis-submissions-open',
@@ -309,6 +408,31 @@ export const eventGroups = [
     color: '#73853d',
     description:
       'The Workshop on Information Technologies and Systems is an annual workshop focused on the design science and analytics side of IS research, held alongside ICIS.',
+    topics: [
+      'Generative AI & Large Language Models',
+      'Machine & Deep Learning',
+      'Human-AI Collaboration',
+      'Trustworthy & Responsible AI',
+      'Healthcare Technologies',
+      'Cybersecurity, Privacy & Information Quality',
+      'Platform Ecosystems & Digital Markets',
+      'Blockchain & Digital Asset Technologies',
+      'Recommender & Personalization Systems',
+    ],
+    committee: [
+      { role: 'Conference Chair', name: 'Xiao Fang', affiliation: 'University of Delaware' },
+      { role: 'Conference Chair', name: 'Konstantina Valogianni', affiliation: 'IE Business School' },
+      { role: 'Program Chair', name: 'Yong Ge', affiliation: 'University of Arizona' },
+      { role: 'Program Chair', name: 'Weifeng Li', affiliation: 'University of Georgia' },
+      { role: 'Program Chair', name: 'Inbal Yahav', affiliation: 'Tel Aviv University' },
+      { role: 'Local Arrangements Chair', name: 'Qiwei Han', affiliation: 'Nova SBE, Lisbon' },
+      { role: 'Local Arrangements Chair', name: 'Yufei Shen', affiliation: 'Nova SBE, Lisbon' },
+    ],
+    callForPapers: {
+      summary:
+        'Completed research, research-in-progress, dissertation proposals, and demos/prototypes via Microsoft CMT.',
+      url: 'https://witsconf.org/wits2026-call-for-papers/',
+    },
     events: [
       {
         id: 'wits-research-deadline',
@@ -424,6 +548,20 @@ export const eventGroups = [
     color: '#7b5aa6',
     description:
       'The Conference on Health IT and Analytics convenes researchers working at the intersection of healthcare, information technology, and analytics.',
+    topics: [
+      'AI for Healthcare (Generative & Agentic AI)',
+      'Human-AI Collaboration in Health',
+      'Machine Learning & Big Data in Health',
+      'Health Data Ecosystems & Interoperability',
+      'Data Governance & Health Information Exchange',
+      'IT-Enabled Care Delivery Models',
+      'Clinical & Operational Optimization',
+    ],
+    callForPapers: {
+      summary:
+        'Brief abstracts (max 500 words) via EasyChair, with optional extended abstract or full manuscript; multidisciplinary submissions welcome.',
+      url: 'https://cdhai.carey.jhu.edu/wp-content/uploads/sites/5/2025/12/CHITA-CFP-2026-.pdf',
+    },
     events: [
       {
         id: 'chita-abstract-deadline',
