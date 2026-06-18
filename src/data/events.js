@@ -1,3 +1,7 @@
+// Each group is one conference. Beyond the calendar fields, groups carry
+// optional "hub" fields — venue, coordinates, description, topics, committee,
+// callForPapers — that the detail view renders only when present. Leaving them
+// optional makes room to enrich any conference later without schema changes.
 export const eventGroups = [
   {
     id: 'amcis-2026',
@@ -6,11 +10,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'The Next Transformation',
     location: 'Reno, Nevada, USA',
+    venue: 'Reno, Nevada, USA',
+    coordinates: { lat: 39.5296, lng: -119.8138 },
     website: 'https://amcis2026.aisconferences.org/',
     sourceUrl: 'https://amcis2026.aisconferences.org/submissions/call-for-papers/',
     sourceLabel: 'AMCIS 2026 Call for Papers & Important Dates',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#2f7c7a',
+    description:
+      'The Americas Conference on Information Systems is one of AIS’s flagship regional conferences, drawing IS scholars from across the Americas.',
     events: [
       {
         id: 'amcis-submissions-open',
@@ -91,11 +99,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'Reimagining Digital Technology for Business, Management, and Society',
     location: 'Bocconi University, Milan, Italy',
+    venue: 'Bocconi University, Milan, Italy',
+    coordinates: { lat: 45.4447, lng: 9.19 },
     website: 'https://ecis2026.it/',
     sourceUrl: 'https://ecis2026.it/call-for-submissions/',
     sourceLabel: 'ECIS 2026 Call for Submissions',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#91633b',
+    description:
+      'The European Conference on Information Systems is AIS’s flagship European conference, hosted in 2026 by Bocconi University in Milan.',
     events: [
       {
         id: 'ecis-workshop-deadline',
@@ -161,11 +173,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'Leapfrogging the Future with Artificial Intelligence',
     location: 'Pullman Hotel Thamrin CBD, Jakarta, Indonesia',
+    venue: 'Pullman Hotel Thamrin CBD, Jakarta, Indonesia',
+    coordinates: { lat: -6.1862, lng: 106.823 },
     website: 'https://pacis2026.aisconferences.org/',
     sourceUrl: 'https://pacis2026.aisconferences.org/submissions/call-for-papers/',
     sourceLabel: 'PACIS 2026 Call for Papers & Important Dates',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#b44748',
+    description:
+      'The Pacific Asia Conference on Information Systems is AIS’s flagship conference for the Pacific Asia region.',
     events: [
       {
         id: 'pacis-submission-deadline',
@@ -224,11 +240,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'Digital Collaboration and Coexistence',
     location: 'Lisbon, Portugal',
+    venue: 'Lisbon, Portugal',
+    coordinates: { lat: 38.7223, lng: -9.1393 },
     website: 'https://icis2026.aisconferences.org/',
     sourceUrl: 'https://icis2026.aisconferences.org/submissions/call-for-papers/',
     sourceLabel: 'ICIS 2026 Call for Papers & Important Dates',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#4f65a6',
+    description:
+      'The International Conference on Information Systems is the premier global gathering of IS researchers and the flagship conference of AIS.',
     events: [
       {
         id: 'icis-submissions-open',
@@ -280,11 +300,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'Designing AI Artifacts for Digital Transformation',
     location: 'Lisbon, Portugal',
+    venue: 'Lisbon, Portugal',
+    coordinates: { lat: 38.7223, lng: -9.1393 },
     website: 'https://witsconf.org/wits2026-call-for-papers/',
     sourceUrl: 'https://witsconf.org/wits2026-call-for-papers/',
     sourceLabel: 'WITS 2026 Call for Papers',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#73853d',
+    description:
+      'The Workshop on Information Technologies and Systems is an annual workshop focused on the design science and analytics side of IS research, held alongside ICIS.',
     events: [
       {
         id: 'wits-research-deadline',
@@ -327,11 +351,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'O.R. and analytics for smarter decisions',
     location: 'Moscone Center South & Marriott Marquis, San Francisco, California, USA',
+    venue: 'Moscone Center South & Marriott Marquis, San Francisco, California, USA',
+    coordinates: { lat: 37.7843, lng: -122.4014 },
     website: 'https://meetings.informs.org/wordpress/annual/',
     sourceUrl: 'https://meetings.informs.org/wordpress/annual/abstract-submission/',
     sourceLabel: '2026 INFORMS Annual Meeting Abstract Submission',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#d07f2f',
+    description:
+      'The INFORMS Annual Meeting is the largest gathering for operations research and analytics, with substantial information systems and IT participation.',
     events: [
       {
         id: 'informs-job-talk-deadline',
@@ -387,11 +415,15 @@ export const eventGroups = [
     year: 2026,
     theme: 'Building an AI-ready healthcare ecosystem',
     location: 'Johns Hopkins Bloomberg Center, 555 Pennsylvania Avenue, Washington, D.C., USA',
+    venue: 'Johns Hopkins Bloomberg Center, 555 Pennsylvania Avenue, Washington, D.C., USA',
+    coordinates: { lat: 38.8954, lng: -77.0228 },
     website: 'https://carey.jhu.edu/events/2026-conference-health-it-and-analytics',
     sourceUrl: 'https://cdhai.carey.jhu.edu/wp-content/uploads/sites/5/2025/12/CHITA-CFP-2026-.pdf',
     sourceLabel: 'CHITA 2026 Call for Papers PDF',
-    sourceChecked: '2026-06-10',
+    sourceChecked: '2026-06-18',
     color: '#7b5aa6',
+    description:
+      'The Conference on Health IT and Analytics convenes researchers working at the intersection of healthcare, information technology, and analytics.',
     events: [
       {
         id: 'chita-abstract-deadline',
@@ -426,6 +458,146 @@ export const eventGroups = [
       },
     ],
   },
+  {
+    id: 'wise-2026',
+    acronym: 'WISE',
+    name: 'Workshop on Information Systems and Economics',
+    year: 2026,
+    theme: 'Information systems and economics at the intersection of digital technology and markets',
+    location: 'Lisbon, Portugal',
+    venue: 'Venue to be announced — Lisbon, Portugal',
+    coordinates: { lat: 38.7223, lng: -9.1393 },
+    website: 'https://wiseconf2026.github.io',
+    sourceUrl: 'https://wiseconf2026.github.io',
+    sourceLabel: 'WISE 2026 Call for Papers',
+    sourceChecked: '2026-06-18',
+    color: '#bf4d97',
+    description:
+      'The 37th Annual Workshop on Information Systems and Economics brings together researchers studying how digital technologies reshape economic activity, organizational decision-making, and market structures.',
+    topics: [
+      'AI & automation',
+      'Digital platforms & markets',
+      'Data & analytics',
+      'Trust & privacy',
+      'Work & human-technology interaction',
+      'Technology & sustainability',
+      'Fintech & digital currencies',
+    ],
+    committee: [
+      { role: 'Co-chair', name: 'Rodrigo Belo', affiliation: 'Nova SBE' },
+      { role: 'Co-chair', name: 'Aaron Cheng', affiliation: 'LSE' },
+      { role: 'Co-chair', name: 'Pedro Ferreira', affiliation: 'Carnegie Mellon University' },
+      { role: 'Co-chair', name: 'Miguel Godinho de Matos', affiliation: 'Católica Lisbon' },
+      { role: 'Co-chair', name: 'Shachar Reichman', affiliation: 'Tel Aviv University' },
+      { role: 'Co-chair', name: 'Daniel Rock', affiliation: 'The Wharton School' },
+      { role: 'Co-chair', name: 'Maytal Saar-Tsechansky', affiliation: 'UT Austin' },
+      { role: 'Co-chair', name: 'Vilma Todri', affiliation: 'Emory University' },
+    ],
+    callForPapers: {
+      summary:
+        'Extended abstracts of up to 6 pages (double-spaced, 12pt, 1-inch margins) submitted as PDF via PaperFox.',
+      url: 'https://wiseconf2026.github.io',
+    },
+    events: [
+      {
+        id: 'wise-submission-deadline',
+        title: 'Paper submission deadline',
+        kind: 'deadline',
+        date: '2026-08-23',
+        timeLabel: '11:59 PM PT',
+        startDateTime: '2026-08-23T23:59:00-07:00',
+      },
+      {
+        id: 'wise-acceptance',
+        title: 'Acceptance notifications',
+        kind: 'notification',
+        date: '2026-09-18',
+      },
+      {
+        id: 'wise-early-registration',
+        title: 'Early registration deadline',
+        kind: 'registration',
+        date: '2026-10-15',
+      },
+      {
+        id: 'wise-regular-registration',
+        title: 'Regular registration deadline',
+        kind: 'registration',
+        date: '2026-11-01',
+      },
+      {
+        id: 'wise-late-registration',
+        title: 'Late registration deadline',
+        kind: 'registration',
+        date: '2026-11-30',
+      },
+      {
+        id: 'wise-conference',
+        title: 'WISE 2026 workshop',
+        kind: 'conference',
+        date: '2026-12-16',
+        endDate: '2026-12-18',
+        note: 'Welcome reception December 16; conference sessions December 17–18.',
+      },
+    ],
+  },
+  {
+    id: 'aom-2026',
+    acronym: 'AOM',
+    name: 'Academy of Management Annual Meeting',
+    year: 2026,
+    theme: '',
+    location: 'Philadelphia, Pennsylvania, USA',
+    venue:
+      'Pennsylvania Convention Center & downtown hotels (Loews, Marriott, Sheraton), Philadelphia, USA',
+    coordinates: { lat: 39.9526, lng: -75.1652 },
+    website: 'https://www.aom.org/events/annual-meeting/aom-2026/',
+    sourceUrl: 'https://www.aom.org/wp-content/uploads/2025/11/2026_Call_for_Submissions.pdf',
+    sourceLabel: 'AOM 2026 Call for Submissions',
+    sourceChecked: '2026-06-18',
+    color: '#2f9e5b',
+    description:
+      'The 86th Annual Meeting of the Academy of Management gathers management and organization scholars across all divisions; 2026 has no formal conference theme, opening the program to the full breadth of management research, including the OCIS (information systems) division.',
+    topics: [
+      'Organizational Behavior (OB)',
+      'Strategic Management (STR)',
+      'Technology & Innovation Management (TIM)',
+      'Organization & Management Theory (OMT)',
+      'Org. Communication & Information Systems (OCIS)',
+      'Entrepreneurship (ENT)',
+      'Human Resources (HR)',
+    ],
+    callForPapers: {
+      summary:
+        'Submissions across all AOM divisions and interest groups. A submission ID must be created by the deadline; no formal meeting-wide theme for 2026.',
+      url: 'https://www.aom.org/wp-content/uploads/2025/11/2026_Call_for_Submissions.pdf',
+    },
+    events: [
+      {
+        id: 'aom-submission-deadline',
+        title: 'Submission deadline',
+        kind: 'deadline',
+        date: '2026-01-13',
+        timeLabel: '5:00 PM ET',
+        startDateTime: '2026-01-13T17:00:00-05:00',
+        note: 'Submission ID must be created by 17:00 ET; edits accepted until 23:59 ET.',
+      },
+      {
+        id: 'aom-hotel-deadline',
+        title: 'Hotel reservation deadline',
+        kind: 'registration',
+        date: '2026-07-08',
+        note: 'After July 17, 2026 changes or cancellations must be made directly with the property.',
+      },
+      {
+        id: 'aom-annual-meeting',
+        title: 'AOM 2026 Annual Meeting',
+        kind: 'conference',
+        date: '2026-07-31',
+        endDate: '2026-08-04',
+      },
+    ],
+  },
 ];
 
 export function flattenEvents(groups = eventGroups) {
@@ -446,4 +618,10 @@ export function flattenEvents(groups = eventGroups) {
       color: group.color,
     })),
   );
+}
+
+// The primary conference event for a group (the multi-day meeting itself),
+// used for map markers and the detail header. Falls back to the earliest event.
+export function conferenceEvent(group) {
+  return group.events.find((event) => event.kind === 'conference') || group.events[0];
 }

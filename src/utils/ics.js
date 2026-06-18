@@ -86,10 +86,10 @@ export function buildIcs(events) {
   const calendarLines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//MIS Scholar Calendar//2026//EN',
+    'PRODID:-//MIS Scholar Calendar//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:MIS Scholar Calendar 2026',
+    'X-WR-CALNAME:MIS Scholar Calendar',
     ...events.map(buildIcsEvent),
     'END:VCALENDAR',
   ];

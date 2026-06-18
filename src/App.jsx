@@ -1,17 +1,20 @@
 import {
   AlertTriangle,
+  CalendarDays,
   Check,
   ChevronLeft,
   ChevronRight,
   Download,
   ExternalLink,
   FileDown,
+  Info,
+  MapPin,
   Moon,
-  Search,
   Sun,
+  X,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { eventGroups, flattenEvents } from './data/events.js';
+import { conferenceEvent, eventGroups, flattenEvents } from './data/events.js';
 import {
   eventSpansDate,
   formatDayNumber,
@@ -38,6 +41,11 @@ const kindLabels = {
   poster: 'Poster',
 };
 
+// Equirectangular projection → percentage position on the 2:1 world map.
+function projectCoordinates({ lat, lng }) {
+  return { x: ((lng + 180) / 360) * 100, y: ((90 - lat) / 180) * 100 };
+}
+
 function App() {
   const events = useMemo(
     () => flattenEvents().sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)),
@@ -45,8 +53,9 @@ function App() {
   );
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [activeTab, setActiveTab] = useState('calendar');
-  const [activeMonth, setActiveMonth] = useState(5);
-  const [query, setQuery] = useState('');
+  const [activeYear, setActiveYear] = useState(() => new Date().getFullYear());
+  const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
+  const [detailGroupId, setDetailGroupId] = useState(null);
   const [kindFilter, setKindFilter] = useState('all');
   const [activeGroups, setActiveGroups] = useState(
     () => new Set(eventGroups.filter((group) => group.events.some((event) => !isPastEvent(event))).map((group) => group.id)),
@@ -60,16 +69,22 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Years the calendar can browse: at least this year through ~10 years out,
+  // widened to cover any event already on file. New years need no code change.
+  const years = useMemo(() => {
+    const current = new Date().getFullYear();
+    const eventYears = eventGroups.map((group) => group.year).filter(Boolean);
+    const min = Math.min(current, ...eventYears);
+    const max = Math.max(current + 10, ...eventYears);
+    return Array.from({ length: max - min + 1 }, (_, index) => min + index);
+  }, []);
+
   const filteredEvents = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
     return events.filter((event) => {
       if (!activeGroups.has(event.groupId)) return false;
-      const matchesKind = kindFilter === 'all' || event.kind === kindFilter;
-      const haystack = `${event.acronym} ${event.conferenceName} ${event.title} ${event.location} ${event.theme}`.toLowerCase();
-      const matchesQuery = !normalizedQuery || haystack.includes(normalizedQuery);
-      return matchesKind && matchesQuery;
+      return kindFilter === 'all' || event.kind === kindFilter;
     });
-  }, [events, activeGroups, kindFilter, query]);
+  }, [events, activeGroups, kindFilter]);
 
   const selectedEvents = useMemo(
     () => events.filter((event) => selectedIds.has(event.id)),
@@ -77,12 +92,33 @@ function App() {
   );
 
   const monthEvents = useMemo(() => {
+    const monthStart = new Date(activeYear, activeMonth, 1);
+    const monthEnd = new Date(activeYear, activeMonth + 1, 0);
     return filteredEvents.filter((event) => {
       const start = parseDate(event.date);
       const end = parseDate(event.endDate || event.date);
-      return start.getFullYear() === 2026 && start.getMonth() <= activeMonth && end.getMonth() >= activeMonth;
+      return start <= monthEnd && end >= monthStart;
     });
-  }, [activeMonth, filteredEvents]);
+  }, [activeYear, activeMonth, filteredEvents]);
+
+  const mapGroups = useMemo(
+    () => eventGroups.filter((group) => activeGroups.has(group.id)),
+    [activeGroups],
+  );
+
+  const detailGroup = useMemo(
+    () => eventGroups.find((group) => group.id === detailGroupId) || null,
+    [detailGroupId],
+  );
+
+  useEffect(() => {
+    if (!detailGroup) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') setDetailGroupId(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [detailGroup]);
 
   function toggleEvent(eventId) {
     setSelectedIds((current) => {
@@ -120,12 +156,12 @@ function App() {
 
   function exportIcs() {
     if (selectedEvents.length === 0) return;
-    downloadTextFile('mis-scholar-calendar-2026.ics', buildIcs(selectedEvents), 'text/calendar;charset=utf-8');
+    downloadTextFile('mis-scholar-calendar.ics', buildIcs(selectedEvents), 'text/calendar;charset=utf-8');
   }
 
   function exportCsv() {
     if (selectedEvents.length === 0) return;
-    downloadTextFile('mis-scholar-calendar-2026.csv', buildCsv(selectedEvents), 'text/csv;charset=utf-8');
+    downloadTextFile('mis-scholar-calendar.csv', buildCsv(selectedEvents), 'text/csv;charset=utf-8');
   }
 
   return (
@@ -150,7 +186,6 @@ function App() {
           <a className="brand" href="#top" aria-label="MIS Scholar Calendar home">
             <span>
               <strong>MIS Scholar Calendar</strong>
-              <small>2026 conference dates and deadlines</small>
             </span>
           </a>
         </div>
@@ -161,6 +196,9 @@ function App() {
           </button>
           <button className={activeTab === 'events' ? 'active' : ''} onClick={() => setActiveTab('events')}>
             Events
+          </button>
+          <button className={activeTab === 'map' ? 'active' : ''} onClick={() => setActiveTab('map')}>
+            Map
           </button>
         </nav>
 
@@ -178,20 +216,11 @@ function App() {
         <section className="page-intro" aria-labelledby="page-title">
           <div className="intro-head">
             <p className="eyebrow">MIS research planning</p>
-            <h1 id="page-title">2026 conference calendar</h1>
-            <p className="intro-copy">
-              AIS regional conferences, ICIS, WITS, INFORMS Annual Meeting, and CHITA in one exportable calendar.
-            </p>
+            <h1 id="page-title">Conference calendar</h1>
           </div>
         </section>
 
         <section className="conference-chooser" aria-label="Choose conferences">
-          <div className="chooser-head">
-            <span className="chooser-title">Conferences</span>
-            <span className="chooser-hint">
-              Toggle a conference to include or exclude its dates from your export.
-            </span>
-          </div>
           <div className="chip-row" role="group" aria-label="Conference selection">
             {eventGroups.map((group) => (
               <ConferenceChip
@@ -203,58 +232,41 @@ function App() {
               />
             ))}
           </div>
-        </section>
 
-        <section className="notice" role="note">
-          <AlertTriangle size={18} />
-          <span>
-            Conference websites change frequently. This calendar is a source-backed starting point, not a guarantee of
-            accuracy. Verify details on the official event site before submitting, registering, or traveling.
-          </span>
-        </section>
+          <div className="chooser-controls">
+            <label className="select-wrap">
+              <span>Type</span>
+              <select value={kindFilter} onChange={(event) => setKindFilter(event.target.value)}>
+                <option value="all">All types</option>
+                {Object.entries(kindLabels).map(([kind, label]) => (
+                  <option value={kind} key={kind}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <section className="controls" aria-label="Calendar controls">
-          <label className="search-box">
-            <Search size={18} />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search conferences, dates, cities..."
-            />
-          </label>
-
-          <label className="select-wrap">
-            <span>Type</span>
-            <select value={kindFilter} onChange={(event) => setKindFilter(event.target.value)}>
-              <option value="all">All types</option>
-              {Object.entries(kindLabels).map(([kind, label]) => (
-                <option value={kind} key={kind}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="export-group" aria-label="Export selected dates">
-            <span className="export-count">{selectedEvents.length} selected</span>
-            <button
-              className="export-btn"
-              onClick={exportIcs}
-              disabled={selectedEvents.length === 0}
-              title="Download an .ics calendar of the selected dates"
-            >
-              <Download size={15} />
-              .ics
-            </button>
-            <button
-              className="export-btn"
-              onClick={exportCsv}
-              disabled={selectedEvents.length === 0}
-              title="Download a .csv spreadsheet of the selected dates"
-            >
-              <FileDown size={15} />
-              .csv
-            </button>
+            <div className="export-group" aria-label="Export selected dates">
+              <span className="export-count">{selectedEvents.length} selected</span>
+              <button
+                className="export-btn"
+                onClick={exportIcs}
+                disabled={selectedEvents.length === 0}
+                title="Download an .ics calendar of the selected dates"
+              >
+                <Download size={15} />
+                .ics
+              </button>
+              <button
+                className="export-btn"
+                onClick={exportCsv}
+                disabled={selectedEvents.length === 0}
+                title="Download a .csv spreadsheet of the selected dates"
+              >
+                <FileDown size={15} />
+                .csv
+              </button>
+            </div>
           </div>
         </section>
 
@@ -262,6 +274,9 @@ function App() {
           <CalendarView
             activeMonth={activeMonth}
             setActiveMonth={setActiveMonth}
+            activeYear={activeYear}
+            setActiveYear={setActiveYear}
+            years={years}
             filteredEvents={filteredEvents}
             monthEvents={monthEvents}
             selectedIds={selectedIds}
@@ -275,38 +290,90 @@ function App() {
             activeGroups={activeGroups}
             selectedIds={selectedIds}
             toggleEvent={toggleEvent}
+            onOpenDetail={setDetailGroupId}
           />
         )}
+
+        {activeTab === 'map' && <MapView groups={mapGroups} onOpenDetail={setDetailGroupId} />}
+
+        <section className="notice" role="note">
+          <AlertTriangle size={18} />
+          <span>
+            Conference websites change frequently. This calendar is a source-backed starting point, not a guarantee of
+            accuracy. Verify details on the official event site before submitting, registering, or traveling.
+          </span>
+        </section>
       </main>
+
+      {detailGroup && (
+        <ConferenceDetail
+          group={detailGroup}
+          onClose={() => setDetailGroupId(null)}
+          selectedIds={selectedIds}
+          toggleEvent={toggleEvent}
+        />
+      )}
     </div>
   );
 }
 
-function CalendarView({ activeMonth, setActiveMonth, filteredEvents, monthEvents, selectedIds, toggleEvent }) {
-  const days = monthMatrix(2026, activeMonth);
+function CalendarView({
+  activeMonth,
+  setActiveMonth,
+  activeYear,
+  setActiveYear,
+  years,
+  filteredEvents,
+  monthEvents,
+  selectedIds,
+  toggleEvent,
+}) {
+  const days = monthMatrix(activeYear, activeMonth);
+  const minYear = years[0];
+  const maxYear = years[years.length - 1];
+  const canPrev = activeYear > minYear || activeMonth > 0;
+  const canNext = activeYear < maxYear || activeMonth < 11;
+
+  function goPrev() {
+    if (!canPrev) return;
+    if (activeMonth === 0) {
+      setActiveYear(activeYear - 1);
+      setActiveMonth(11);
+    } else {
+      setActiveMonth(activeMonth - 1);
+    }
+  }
+
+  function goNext() {
+    if (!canNext) return;
+    if (activeMonth === 11) {
+      setActiveYear(activeYear + 1);
+      setActiveMonth(0);
+    } else {
+      setActiveMonth(activeMonth + 1);
+    }
+  }
 
   return (
     <section className="calendar-layout">
       <div className="calendar-panel">
         <div className="month-switcher">
-          <button
-            className="icon-button"
-            onClick={() => setActiveMonth((month) => Math.max(0, month - 1))}
-            title="Previous month"
-            aria-label="Previous month"
-          >
+          <button className="icon-button" onClick={goPrev} disabled={!canPrev} title="Previous month" aria-label="Previous month">
             <ChevronLeft size={19} />
           </button>
-          <div>
-            <p>2026</p>
+          <div className="switcher-center">
+            <label className="year-pick">
+              <select value={activeYear} onChange={(event) => setActiveYear(Number(event.target.value))} aria-label="Year">
+                {years.map((year) => (
+                  <option value={year} key={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </label>
             <h2>{monthNames[activeMonth]}</h2>
           </div>
-          <button
-            className="icon-button"
-            onClick={() => setActiveMonth((month) => Math.min(11, month + 1))}
-            title="Next month"
-            aria-label="Next month"
-          >
+          <button className="icon-button" onClick={goNext} disabled={!canNext} title="Next month" aria-label="Next month">
             <ChevronRight size={19} />
           </button>
         </div>
@@ -359,7 +426,9 @@ function CalendarView({ activeMonth, setActiveMonth, filteredEvents, monthEvents
       </div>
 
       <aside className="month-agenda" aria-labelledby="month-agenda-title">
-        <h2 id="month-agenda-title">{monthNames[activeMonth]} items</h2>
+        <h2 id="month-agenda-title">
+          {monthNames[activeMonth]} {activeYear}
+        </h2>
         <div className="agenda-list">
           {monthEvents.length === 0 ? (
             <p className="empty-state">No matching events in this month.</p>
@@ -380,7 +449,7 @@ function CalendarView({ activeMonth, setActiveMonth, filteredEvents, monthEvents
   );
 }
 
-function EventsView({ filteredEvents, activeGroups, selectedIds, toggleEvent }) {
+function EventsView({ filteredEvents, activeGroups, selectedIds, toggleEvent, onOpenDetail }) {
   const grouped = eventGroups
     .filter((group) => activeGroups.has(group.id))
     .map((group) => ({
@@ -400,10 +469,16 @@ function EventsView({ filteredEvents, activeGroups, selectedIds, toggleEvent }) 
               <h2>{group.name}</h2>
               <p>{group.location}</p>
             </div>
-            <a href={group.website} target="_blank" rel="noreferrer" className="source-link">
-              Official site
-              <ExternalLink size={15} />
-            </a>
+            <div className="heading-actions">
+              <button type="button" className="detail-btn" onClick={() => onOpenDetail(group.id)}>
+                <Info size={15} />
+                Details
+              </button>
+              <a href={group.website} target="_blank" rel="noreferrer" className="source-link">
+                Official site
+                <ExternalLink size={15} />
+              </a>
+            </div>
           </div>
 
           {group.items.length === 0 ? (
@@ -430,6 +505,229 @@ function EventsView({ filteredEvents, activeGroups, selectedIds, toggleEvent }) 
         </article>
       ))}
     </section>
+  );
+}
+
+function MapView({ groups, onOpenDetail }) {
+  // Co-located venues (e.g. ICIS, WITS, WISE all in Lisbon) share a point;
+  // fan their markers around it so each stays clickable.
+  const clusters = useMemo(() => {
+    const map = new Map();
+    groups.forEach((group) => {
+      const key = `${group.coordinates.lat.toFixed(1)},${group.coordinates.lng.toFixed(1)}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(group.id);
+    });
+    return map;
+  }, [groups]);
+
+  function markerOffset(group) {
+    const key = `${group.coordinates.lat.toFixed(1)},${group.coordinates.lng.toFixed(1)}`;
+    const members = clusters.get(key) || [group.id];
+    if (members.length < 2) return { dx: 0, dy: 0 };
+    const index = members.indexOf(group.id);
+    const angle = (index / members.length) * Math.PI * 2;
+    const radius = 15;
+    return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius };
+  }
+
+  return (
+    <section className="map-layout">
+      <div className="map-panel">
+        <div className="world-map" role="img" aria-label="World map of conference host cities">
+          <div className="world-map-land" aria-hidden="true" />
+          {groups.map((group) => {
+            const { x, y } = projectCoordinates(group.coordinates);
+            const { dx, dy } = markerOffset(group);
+            return (
+              <button
+                type="button"
+                className="map-marker"
+                key={group.id}
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  '--event-color': group.color,
+                  transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`,
+                }}
+                onClick={() => onOpenDetail(group.id)}
+                title={`${group.acronym} — ${group.location}`}
+              >
+                <span className="map-marker-dot" aria-hidden="true" />
+                <span className="map-marker-label">{group.acronym}</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="map-hint">Markers show each conference’s host city. Select a pin for details.</p>
+      </div>
+
+      <aside className="map-list" aria-label="Conference locations">
+        {groups.length === 0 ? (
+          <p className="empty-state">No conferences match your filters.</p>
+        ) : (
+          groups.map((group) => {
+            const conf = conferenceEvent(group);
+            return (
+              <button type="button" className="map-list-item" key={group.id} onClick={() => onOpenDetail(group.id)}>
+                <span className="event-chip" style={{ '--event-color': group.color }}>
+                  {group.acronym}
+                </span>
+                <span className="map-list-main">
+                  <strong>{group.location}</strong>
+                  <small>
+                    {conf ? formatDisplayDate(conf) : ''}
+                    {conf && isPastEvent(conf) ? ' · past' : ''}
+                  </small>
+                </span>
+                <MapPin size={16} />
+              </button>
+            );
+          })
+        )}
+      </aside>
+    </section>
+  );
+}
+
+function ConferenceDetail({ group, onClose, selectedIds, toggleEvent }) {
+  const conf = conferenceEvent(group);
+  const { x, y } = projectCoordinates(group.coordinates);
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${group.coordinates.lat},${group.coordinates.lng}`;
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" role="dialog" aria-modal="true" aria-label={group.name} onClick={(event) => event.stopPropagation()}>
+        <header className="modal-head">
+          <div className="modal-title">
+            <span className="event-chip" style={{ '--event-color': group.color }}>
+              {group.acronym}
+            </span>
+            <h2>{group.name}</h2>
+            {group.theme && <p className="modal-theme">{group.theme}</p>}
+          </div>
+          <button className="icon-button" onClick={onClose} aria-label="Close details">
+            <X size={18} />
+          </button>
+        </header>
+
+        <div className="modal-body">
+          <div className="modal-facts">
+            <div className="fact">
+              <MapPin size={15} />
+              <span>{group.venue || group.location}</span>
+            </div>
+            {conf && (
+              <div className="fact">
+                <CalendarDays size={15} />
+                <span>
+                  {formatDisplayDate(conf)}
+                  {isPastEvent(conf) ? ' · past' : ''}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="detail-map" aria-hidden="true">
+            <div className="world-map-land" />
+            <span
+              className="map-marker static"
+              style={{ left: `${x}%`, top: `${y}%`, '--event-color': group.color }}
+            >
+              <span className="map-marker-dot" />
+            </span>
+          </div>
+          <div className="detail-map-links">
+            <a className="source-link" href={mapsUrl} target="_blank" rel="noreferrer">
+              View venue on map
+              <ExternalLink size={14} />
+            </a>
+            <a className="source-link" href={group.website} target="_blank" rel="noreferrer">
+              Official site
+              <ExternalLink size={14} />
+            </a>
+          </div>
+
+          {group.description && <p className="modal-section-copy">{group.description}</p>}
+
+          {group.topics?.length > 0 && (
+            <section className="modal-section">
+              <h3>Topics</h3>
+              <div className="topic-row">
+                {group.topics.map((topic) => (
+                  <span className="topic-chip" key={topic}>
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {group.committee?.length > 0 && (
+            <section className="modal-section">
+              <h3>Organizing committee</h3>
+              <ul className="committee-list">
+                {group.committee.map((member) => (
+                  <li key={member.name}>
+                    <strong>{member.name}</strong>
+                    <span>
+                      {member.role}
+                      {member.affiliation ? ` · ${member.affiliation}` : ''}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {group.callForPapers && (
+            <section className="modal-section">
+              <h3>Call for papers</h3>
+              {group.callForPapers.summary && (
+                <p className="modal-section-copy">{group.callForPapers.summary}</p>
+              )}
+              {group.callForPapers.url && (
+                <a className="source-link" href={group.callForPapers.url} target="_blank" rel="noreferrer">
+                  Call for papers
+                  <ExternalLink size={14} />
+                </a>
+              )}
+            </section>
+          )}
+
+          <section className="modal-section">
+            <h3>Key dates</h3>
+            <div className="event-list">
+              {group.events.map((event) => {
+                const id = `${group.id}:${event.id}`;
+                const flat = {
+                  ...event,
+                  id,
+                  acronym: group.acronym,
+                  color: group.color,
+                  conferenceName: group.name,
+                };
+                return (
+                  <EventRow
+                    event={flat}
+                    checked={selectedIds.has(id)}
+                    onChange={() => toggleEvent(id)}
+                    key={id}
+                  />
+                );
+              })}
+            </div>
+          </section>
+
+          <div className="source-note">
+            Source checked {group.sourceChecked}:{' '}
+            <a href={group.sourceUrl} target="_blank" rel="noreferrer">
+              {group.sourceLabel}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
