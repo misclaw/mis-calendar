@@ -67,6 +67,7 @@ a {
 
 .app-shell {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -953,6 +954,113 @@ h1 {
   margin: 0;
 }
 
+/* Journal special-issue calls */
+.journal-section {
+  display: grid;
+  gap: 16px;
+}
+
+.journal-intro h2 {
+  margin: 0 0 4px;
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+}
+
+.journal-intro p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.journal-list {
+  display: grid;
+  gap: 14px;
+}
+
+.journal-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--event-color);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: clamp(14px, 2.2vw, 20px);
+  box-shadow: 0 8px 26px rgba(30, 31, 28, 0.05);
+}
+
+.journal-card.past {
+  opacity: 0.62;
+}
+
+.journal-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.journal-name {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.deadline-badge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--event-color) 14%, var(--surface));
+  color: color-mix(in srgb, var(--event-color) 80%, var(--text));
+  font-weight: 800;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.deadline-badge.past {
+  background: var(--surface-soft);
+  color: var(--muted);
+}
+
+.journal-title {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  line-height: 1.25;
+}
+
+.journal-scope {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 0.92rem;
+}
+
+.journal-editors,
+.journal-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.journal-editors strong {
+  color: var(--text);
+}
+
+.journal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.journal-card .event-chip {
+  margin: 0;
+}
+
 /* Conference detail modal */
 .modal-backdrop {
   position: fixed;
@@ -1136,7 +1244,7 @@ h1 {
 
 @media (max-width: 620px) {
   main {
-    padding-inline: 12px;
+    padding: 14px 12px 40px;
   }
 
   .topbar {
@@ -1159,7 +1267,6 @@ h1 {
     display: none; /* the mascot alone is the way home */
   }
 
-  /* Hide the intro on phones so the calendar shows right away */
   .page-intro {
     display: none;
   }
@@ -1167,31 +1274,39 @@ h1 {
   .conference-chooser {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
   }
 
+  /* Wrap chips onto multiple rows rather than scrolling horizontally */
   .chip-row {
     flex: 0 0 auto;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin: 0 -16px;
-    padding: 0 16px 4px;
-    scrollbar-width: none;
-  }
-
-  .chip-row::-webkit-scrollbar {
-    display: none;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
   }
 
   .conf-chip {
     flex: 0 0 auto;
+    min-height: 30px;
+    gap: 6px;
+    padding: 0 10px 0 7px;
+    font-size: 0.78rem;
+  }
+
+  .conf-chip-check {
+    width: 16px;
+    height: 16px;
   }
 
   .chooser-controls {
     margin-left: 0;
     align-self: flex-start;
     flex-wrap: wrap;
+    gap: 8px;
   }
 
   .chooser-controls .export-group {
@@ -1200,6 +1315,16 @@ h1 {
 
   .chooser-controls .export-count {
     display: none;
+  }
+
+  .select-wrap {
+    min-height: 34px;
+  }
+
+  .export-btn {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 0.78rem;
   }
 
   .notice {

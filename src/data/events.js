@@ -2,7 +2,7 @@
 // optional "hub" fields — venue, coordinates, description, topics, committee,
 // callForPapers — that the detail view renders only when present. Leaving them
 // optional makes room to enrich any conference later without schema changes.
-export const eventGroups = [
+const conferenceGroups = [
   {
     id: 'amcis-2026',
     acronym: 'AMCIS',
@@ -736,7 +736,289 @@ export const eventGroups = [
       },
     ],
   },
+  {
+    id: 'hicss-2027',
+    acronym: 'HICSS',
+    name: 'Hawaii International Conference on System Sciences',
+    year: 2027,
+    theme: '',
+    location: 'Hilton Waikoloa Village, Big Island, Hawaii, USA',
+    venue: 'Hilton Waikoloa Village, Big Island, Hawaii, USA',
+    coordinates: { lat: 19.9203, lng: -155.8872 },
+    website: 'https://hicss.hawaii.edu/',
+    sourceUrl: 'https://hicss.hawaii.edu/authors/',
+    sourceLabel: 'HICSS-60 author dates & tracks',
+    sourceChecked: '2026-06-18',
+    color: '#2a93b0',
+    description:
+      'The Hawaii International Conference on System Sciences is one of the longest-standing IS conferences, organized around tracks and minitracks spanning the breadth of information systems research.',
+    topics: [
+      'Collaboration Systems & Technologies',
+      'Decision Analytics & Service Science',
+      'Digital & Social Media',
+      'Digital Government',
+      'Information Technology in Healthcare',
+      'Knowledge Innovation & Entrepreneurial Systems',
+      'Organizational Systems & Technology',
+      'Internet at Work & Play',
+      'Software Technology',
+    ],
+    callForPapers: {
+      summary: 'Full research papers submitted across 11 tracks and their minitracks.',
+      url: 'https://hicss.hawaii.edu/authors/',
+    },
+    events: [
+      {
+        id: 'hicss-paper-deadline',
+        title: 'Paper submission deadline',
+        kind: 'deadline',
+        date: '2026-06-15',
+      },
+      {
+        id: 'hicss-notification',
+        title: 'Notification of acceptance/rejection',
+        kind: 'notification',
+        date: '2026-08-17',
+      },
+      {
+        id: 'hicss-revised',
+        title: 'Revised manuscript due (conditionally accepted)',
+        kind: 'deadline',
+        date: '2026-09-04',
+      },
+      {
+        id: 'hicss-revised-notification',
+        title: 'Notification for conditionally accepted papers',
+        kind: 'notification',
+        date: '2026-09-10',
+      },
+      {
+        id: 'hicss-final',
+        title: 'Final manuscript submissions due',
+        kind: 'deadline',
+        date: '2026-09-22',
+      },
+      {
+        id: 'hicss-registration',
+        title: 'Author registration deadline',
+        kind: 'registration',
+        date: '2026-10-01',
+      },
+      {
+        id: 'hicss-conference',
+        title: 'HICSS-60 conference',
+        kind: 'conference',
+        date: '2027-01-05',
+        endDate: '2027-01-08',
+      },
+    ],
+  },
+  {
+    id: 'scecr-2026',
+    acronym: 'SCECR',
+    name: 'Symposium on Statistical Challenges in Electronic Commerce Research',
+    year: 2026,
+    theme: '',
+    location: 'Shangri-La Tokyo, Tokyo, Japan',
+    venue: 'Shangri-La Tokyo, Tokyo, Japan',
+    coordinates: { lat: 35.6797, lng: 139.7663 },
+    website: 'https://scecr.com/',
+    sourceUrl: 'https://scecr.com/',
+    sourceLabel: 'SCECR 2026 dates & submission',
+    sourceChecked: '2026-06-19',
+    color: '#b8862b',
+    description:
+      'The Symposium on Statistical Challenges in Electronic Commerce Research convenes researchers across information systems, quantitative marketing, economics, statistics, and machine learning studying e-commerce, platforms, and digital markets.',
+    topics: [
+      'E-commerce & platforms',
+      'Quantitative marketing',
+      'Econometric methods',
+      'Machine learning',
+      'Statistical inference',
+      'Social media & digital content',
+      'FinTech & finance',
+      'Big data techniques',
+    ],
+    callForPapers: {
+      summary:
+        'Extended abstracts submitted via PaperFox across IS, marketing, economics, statistics, and ML.',
+      url: 'https://scecr.com/',
+    },
+    events: [
+      {
+        id: 'scecr-submission-open',
+        title: 'Submission portal opens',
+        kind: 'opening',
+        date: '2026-02-02',
+      },
+      {
+        id: 'scecr-deadline',
+        title: 'Submission deadline',
+        kind: 'deadline',
+        date: '2026-03-11',
+        timeLabel: '11:59 PM JST',
+        note: 'Extended from March 8, 2026.',
+      },
+      {
+        id: 'scecr-decisions',
+        title: 'Decisions communicated',
+        kind: 'notification',
+        date: '2026-04-15',
+      },
+      {
+        id: 'scecr-early-registration',
+        title: 'Early registration deadline',
+        kind: 'registration',
+        date: '2026-04-20',
+      },
+      {
+        id: 'scecr-conference',
+        title: 'SCECR 2026 symposium',
+        kind: 'conference',
+        date: '2026-06-21',
+        endDate: '2026-06-24',
+      },
+    ],
+  },
+  {
+    id: 'wds-2026',
+    acronym: 'WDS',
+    name: 'INFORMS Workshop on Data Science',
+    year: 2026,
+    theme: '',
+    location: 'San Francisco, California, USA',
+    venue: 'San Francisco, California, USA (with the INFORMS Annual Meeting)',
+    coordinates: { lat: 37.7843, lng: -122.4014 },
+    website: 'https://sites.google.com/view/data-science-2026/',
+    sourceUrl: 'https://sites.google.com/view/data-science-2026/',
+    sourceLabel: 'INFORMS WDS 2026 call for papers',
+    sourceChecked: '2026-06-19',
+    color: '#6257c9',
+    description:
+      'The INFORMS Workshop on Data Science, hosted by the INFORMS College on Artificial Intelligence, develops data science theories, algorithms, and methods for business and societal problems, held in conjunction with the INFORMS Annual Meeting.',
+    topics: [
+      'Data mining',
+      'Machine learning',
+      'Optimization',
+      'Marketing analytics',
+      'Finance',
+      'Healthcare',
+      'Cybersecurity',
+      'Social networks',
+    ],
+    committee: [
+      { role: 'Organizing committee contact', name: 'Renyu Zhang', affiliation: 'The Chinese University of Hong Kong' },
+    ],
+    callForPapers: {
+      summary:
+        'Complete papers (up to 10 pages) or short papers (up to 5 pages), blinded — data mining, machine learning, and optimization for business and societal problems.',
+      url: 'https://sites.google.com/view/data-science-2026/',
+    },
+    events: [
+      {
+        id: 'wds-submission-open',
+        title: 'Paper submission opens',
+        kind: 'opening',
+        date: '2026-05-23',
+      },
+      {
+        id: 'wds-deadline',
+        title: 'Paper submission deadline',
+        kind: 'deadline',
+        date: '2026-07-01',
+      },
+      {
+        id: 'wds-notification',
+        title: 'Notification of acceptance',
+        kind: 'notification',
+        date: '2026-08-25',
+      },
+      {
+        id: 'wds-workshop',
+        title: 'INFORMS WDS 2026 workshop',
+        kind: 'conference',
+        date: '2026-10-31',
+      },
+    ],
+  },
+  {
+    id: 'cist-2026',
+    acronym: 'CIST',
+    name: 'Conference on Information Systems and Technology',
+    year: 2026,
+    theme: 'Agentic AI in Action: Building and Governing Intelligent Ecosystems',
+    location: 'Hilton San Francisco Union Square, San Francisco, California, USA',
+    venue: 'Hilton San Francisco Union Square, 333 O’Farrell Street, San Francisco, USA',
+    coordinates: { lat: 37.7858, lng: -122.4103 },
+    website: 'https://cist2026.github.io/',
+    sourceUrl: 'https://cist2026.github.io/cfp/',
+    sourceLabel: 'CIST 2026 Call for Papers',
+    sourceChecked: '2026-06-19',
+    color: '#a83d63',
+    description:
+      'The Conference on Information Systems and Technology is a research conference of the INFORMS Information Systems Society, held in conjunction with the INFORMS Annual Meeting.',
+    topics: [
+      'Agentic AI',
+      'AI governance',
+      'Intelligent ecosystems',
+      'Economics of information systems',
+      'Business analytics & data science',
+      'Digital platforms & markets',
+    ],
+    callForPapers: {
+      summary:
+        'Research on the design, deployment, and governance of agentic AI and the intelligent ecosystems emerging around it.',
+      url: 'https://cist2026.github.io/cfp/',
+    },
+    events: [
+      {
+        id: 'cist-submission-open',
+        title: 'Submission system opens',
+        kind: 'opening',
+        date: '2026-05-15',
+      },
+      {
+        id: 'cist-deadline',
+        title: 'Submission deadline',
+        kind: 'deadline',
+        date: '2026-06-21',
+        timeLabel: '11:59 PM PT',
+        note: 'Extended from June 12, 2026.',
+      },
+      {
+        id: 'cist-notification',
+        title: 'Notification of acceptance',
+        kind: 'notification',
+        date: '2026-08-21',
+      },
+      {
+        id: 'cist-registration',
+        title: 'Early & speaker registration deadline',
+        kind: 'registration',
+        date: '2026-09-12',
+      },
+      {
+        id: 'cist-conference',
+        title: 'CIST 2026 conference',
+        kind: 'conference',
+        date: '2026-10-31',
+        endDate: '2026-11-01',
+      },
+    ],
+  },
 ];
+
+// ICIS, CIST, WISE, WITS lead the chip row and directory; the rest keep their
+// original order (Array.prototype.sort is stable).
+const FRONT_ORDER = ['icis-2026', 'cist-2026', 'wise-2026', 'wits-2026'];
+
+export const eventGroups = [...conferenceGroups].sort((a, b) => {
+  const rank = (group) => {
+    const index = FRONT_ORDER.indexOf(group.id);
+    return index === -1 ? FRONT_ORDER.length : index;
+  };
+  return rank(a) - rank(b);
+});
 
 export function flattenEvents(groups = eventGroups) {
   return groups.flatMap((group) =>

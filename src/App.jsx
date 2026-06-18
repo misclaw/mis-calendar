@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { conferenceEvent, eventGroups, flattenEvents } from './data/events.js';
+import { journalCalls } from './data/journals.js';
 import {
   eventSpansDate,
   formatDayNumber,
@@ -22,6 +23,7 @@ import {
   isPastEvent,
   monthMatrix,
   parseDate,
+  toDateString,
 } from './utils/date.js';
 import { buildCsv, buildIcs, downloadTextFile } from './utils/ics.js';
 
@@ -46,9 +48,43 @@ function projectCoordinates({ lat, lng }) {
   return { x: ((lng + 180) / 360) * 100, y: ((90 - lat) / 180) * 100 };
 }
 
+// Journal special-issue deadlines, shaped like flattened events so they flow
+// through the calendar, agenda, and export alongside conferences.
+const journalEvents = journalCalls.map((call) => ({
+  id: `journals:${call.id}`,
+  localId: call.id,
+  groupId: 'journals',
+  acronym: call.journal,
+  conferenceName: call.journalName,
+  title: call.title,
+  kind: 'deadline',
+  date: call.deadline,
+  theme: '',
+  location: call.journalName,
+  website: call.url,
+  sourceUrl: call.url,
+  sourceLabel: `${call.journalName} call for papers`,
+  sourceChecked: call.sourceChecked,
+  color: call.color,
+}));
+
+// A single toggle chip for all journal CfP deadlines on the calendar.
+const journalChipGroup = {
+  id: 'journals',
+  acronym: 'CfPs',
+  name: 'Journal calls for papers',
+  color: '#6b7785',
+  events: journalCalls.map((call) => ({ date: call.deadline })),
+};
+
+const chipGroups = [...eventGroups, journalChipGroup];
+
 function App() {
   const events = useMemo(
-    () => flattenEvents().sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)),
+    () =>
+      [...flattenEvents(), ...journalEvents].sort(
+        (a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title),
+      ),
     [],
   );
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
@@ -58,7 +94,7 @@ function App() {
   const [detailGroupId, setDetailGroupId] = useState(null);
   const [kindFilter, setKindFilter] = useState('all');
   const [activeGroups, setActiveGroups] = useState(
-    () => new Set(eventGroups.filter((group) => group.events.some((event) => !isPastEvent(event))).map((group) => group.id)),
+    () => new Set(chipGroups.filter((group) => group.events.some((event) => !isPastEvent(event))).map((group) => group.id)),
   );
   const [selectedIds, setSelectedIds] = useState(
     () => new Set(events.filter((event) => !isPastEvent(event)).map((event) => event.id)),
@@ -200,6 +236,9 @@ function App() {
           <button className={activeTab === 'map' ? 'active' : ''} onClick={() => setActiveTab('map')}>
             Map
           </button>
+          <button className={activeTab === 'journals' ? 'active' : ''} onClick={() => setActiveTab('journals')}>
+            Journals
+          </button>
         </nav>
 
         <button
@@ -213,16 +252,10 @@ function App() {
       </header>
 
       <main id="top">
-        <section className="page-intro" aria-labelledby="page-title">
-          <div className="intro-head">
-            <p className="eyebrow">MIS research planning</p>
-            <h1 id="page-title">Conference calendar</h1>
-          </div>
-        </section>
-
+        {activeTab !== 'journals' && (
         <section className="conference-chooser" aria-label="Choose conferences">
           <div className="chip-row" role="group" aria-label="Conference selection">
-            {eventGroups.map((group) => (
+            {chipGroups.map((group) => (
               <ConferenceChip
                 key={group.id}
                 group={group}
@@ -269,6 +302,7 @@ function App() {
             </div>
           </div>
         </section>
+        )}
 
         {activeTab === 'calendar' && (
           <CalendarView
@@ -295,6 +329,8 @@ function App() {
         )}
 
         {activeTab === 'map' && <MapView groups={mapGroups} onOpenDetail={setDetailGroupId} />}
+
+        {activeTab === 'journals' && <JournalsView calls={journalCalls} />}
 
         <section className="notice" role="note">
           <AlertTriangle size={18} />
@@ -587,6 +623,106 @@ function MapView({ groups, onOpenDetail }) {
         )}
       </aside>
     </section>
+  );
+}
+
+function JournalsView({ calls }) {
+  const today = toDateString(new Date());
+  const ordered = useMemo(() => {
+    const sorted = [...calls].sort((a, b) => a.deadline.localeCompare(b.deadline));
+    const open = sorted.filter((call) => call.deadline >= today);
+    const closed = sorted.filter((call) => call.deadline < today).reverse();
+    return [...open, ...closed];
+  }, [calls, today]);
+
+  return (
+    <section className="journal-section">
+      <div className="journal-intro">
+        <h2>Journal special issues</h2>
+        <p>
+          Open calls for papers across leading IS journals — submission deadlines and themes. Verify each call on the
+          official journal page before submitting.
+        </p>
+      </div>
+      <div className="journal-list">
+        {ordered.map((call) => (
+          <JournalCard call={call} key={call.id} past={call.deadline < today} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function JournalCard({ call, past }) {
+  function addToCalendar() {
+    const event = {
+      id: call.id,
+      acronym: call.journal,
+      title: `${call.title} — submission deadline`,
+      conferenceName: call.journalName,
+      theme: call.title,
+      kind: 'deadline',
+      date: call.deadline,
+      location: '',
+      website: call.url,
+      sourceLabel: `${call.journalName} call for papers`,
+      sourceUrl: call.url,
+      color: call.color,
+    };
+    downloadTextFile(`${call.id}.ics`, buildIcs([event]), 'text/calendar;charset=utf-8');
+  }
+
+  return (
+    <article className={`journal-card ${past ? 'past' : ''}`} style={{ '--event-color': call.color }}>
+      <div className="journal-head">
+        <span className="event-chip" style={{ '--event-color': call.color }}>
+          {call.journal}
+        </span>
+        <span className="journal-name">{call.journalName}</span>
+        <span className={`deadline-badge ${past ? 'past' : ''}`}>
+          <CalendarDays size={14} />
+          {formatDisplayDate({ date: call.deadline })}
+          {past ? ' · closed' : ''}
+        </span>
+      </div>
+
+      <h3 className="journal-title">{call.title}</h3>
+      {call.scope && <p className="journal-scope">{call.scope}</p>}
+
+      {call.topics?.length > 0 && (
+        <div className="topic-row">
+          {call.topics.map((topic) => (
+            <span className="topic-chip" key={topic}>
+              {topic}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {call.editors?.length > 0 && (
+        <p className="journal-editors">
+          <strong>Guest editors:</strong> {call.editors.map((editor) => editor.name).join(', ')}
+        </p>
+      )}
+
+      {call.note && <p className="journal-note">{call.note}</p>}
+
+      <div className="journal-actions">
+        <a className="source-link" href={call.url} target="_blank" rel="noreferrer">
+          Call for papers
+          <ExternalLink size={14} />
+        </a>
+        <button
+          className="export-btn"
+          onClick={addToCalendar}
+          disabled={past}
+          title="Add this deadline to your calendar (.ics)"
+        >
+          <Download size={14} />
+          .ics
+        </button>
+      </div>
+    </article>
   );
 }
 
