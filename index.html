@@ -9,6 +9,18 @@
     />
     <link rel="icon" href="/misclaw.png" type="image/png" />
     <title>MIS Scholar Calendar</title>
+    <script>
+      // Shared misclaw theme: a cookie scoped to .misclaw.app keeps the
+      // light/dark choice in sync across every *.misclaw.app site; localStorage
+      // is the same-origin fallback (local dev). Read before paint to avoid a flash.
+      (function () {
+        try {
+          var m = document.cookie.match(/(?:^|;\s*)mc-theme=(light|dark)\b/);
+          var t = m ? m[1] : (localStorage.getItem("theme") || localStorage.getItem("refmap-theme"));
+          if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

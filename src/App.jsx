@@ -87,7 +87,22 @@ function App() {
       ),
     [],
   );
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(() => {
+    // Match the rest of misclaw: a pre-paint reader (index.html) may have set
+    // data-theme from the shared .misclaw.app cookie; trust it, then fall back
+    // to the cookie / localStorage / system preference.
+    const pre = document.documentElement.dataset.theme;
+    if (pre === 'light' || pre === 'dark') return pre;
+    const m = document.cookie.match(/(?:^|;\s*)mc-theme=(light|dark)\b/);
+    if (m) return m[1];
+    try {
+      const ls = localStorage.getItem('theme') || localStorage.getItem('refmap-theme');
+      if (ls === 'light' || ls === 'dark') return ls;
+    } catch (_) {}
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  });
   const [activeTab, setActiveTab] = useState('calendar');
   const [activeYear, setActiveYear] = useState(() => new Date().getFullYear());
   const [activeMonth, setActiveMonth] = useState(() => new Date().getMonth());
@@ -102,7 +117,17 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('theme', theme);
+    // Pin to a cookie on .misclaw.app so the choice stays in sync across every
+    // *.misclaw.app site; localStorage is the same-origin fallback.
+    try { localStorage.setItem('theme', theme); } catch (_) {}
+    try {
+      let c = 'mc-theme=' + theme + ';path=/;max-age=31536000;samesite=lax';
+      if (location.hostname === 'misclaw.app' || location.hostname.endsWith('.misclaw.app')) {
+        c += ';domain=.misclaw.app';
+      }
+      if (location.protocol === 'https:') c += ';secure';
+      document.cookie = c;
+    } catch (_) {}
   }, [theme]);
 
   // Years the calendar can browse: at least this year through ~10 years out,
